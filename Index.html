@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lose to Gain – Daily Check-in</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NBZ1SYCJ73"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NBZ1SYCJ73');
+</script>
+
+<style>
+  :root {
+    --navy: #001b4d;
+    --bg: #f2f6fb;
+    --accent: #2bb58c;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px 16px 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .logo-wrap img {
+    max-width: 260px;
+    width: 70%;
+    height: auto;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 4px 0 10px;
+  }
+
+  .section-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  .section {
+    margin-bottom: 6px;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .options label {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #d0d7e6;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f7f9fc;
+  }
+
+  .options input {
+    accent-color: var(--accent);
+  }
+
+  button {
+    margin-top: 6px;
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  #summary {
+    display: none;
+    font-size: 0.9rem;
+  }
+
+  #summary h2 {
+    margin-bottom: 10px;
+  }
+
+  #summary p {
+    margin: 4px 0;
+  }
+
+  .hint {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    text-align: center;
+    opacity: 0.8;
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+  <!-- AUTH SCREEN -->
+<div id="auth-screen" style="text-align:center; padding:20px;">
+  <h2>Welcome to Lose to Gain</h2>
+
+  <button onclick="googleLogin()">Continue with Google</button>
+
+  <p style="margin:12px 0;">or</p>
+
+  <input id="email" placeholder="Email"><br><br>
+  <input id="password" type="password" placeholder="Password"><br><br>
+
+  <button onclick="emailLogin()">Login / Sign up</button>
+</div>
+<!-- APP SCREEN -->
+<div id="app-screen" style="display:none;">
+<div class="card">
+
+  <div id="form-view">
+    <div class="logo-wrap">
+      <!-- Change src if your file name/location is different -->
+      <img src="LtoG_horizontal.png" alt="Lose to Gain logo">
+    </div>
+
+    <h2>Daily Consistency Check</h2>
+
+    <form id="checkForm">
+      <div class="section">
+        <div class="section-title">Sleep</div>
+        <div class="options">
+          <label><input type="radio" name="Sleep" value="<6 hrs"> &lt;6h</label>
+          <label><input type="radio" name="Sleep" value="6–7 hrs"> 6–7h</label>
+          <label><input type="radio" name="Sleep" value="7–8 hrs"> 7–8h</label>
+          <label><input type="radio" name="Sleep" value="8+ hrs"> 8+h</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Water</div>
+        <div class="options">
+          <label><input type="radio" name="Water" value="Goal hit"> Goal hit</label>
+          <label><input type="radio" name="Water" value="Almost"> Almost</label>
+          <label><input type="radio" name="Water" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Exercise / Steps</div>
+        <div class="options">
+          <label><input type="radio" name="Exercise" value="10+ min"> 10+ min</label>
+          <label><input type="radio" name="Exercise" value="3000+ steps"> 3000+ steps</label>
+          <label><input type="radio" name="Exercise" value="Rest day"> Rest day</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Diet</div>
+        <div class="options">
+          <label><input type="radio" name="Diet" value="100%"> 100%</label>
+          <label><input type="radio" name="Diet" value="70–90%"> 70–90%</label>
+          <label><input type="radio" name="Diet" value="Off plan"> Off plan</label>
+        </div>
+      </div>
+
+      <div class="section">
+  <div class="section-title">Mood</div>
+  <div class="options">
+    <label>
+      <input type="radio" name="Mood" value="😀 Good">
+      😀 Good
+    </label>
+
+    <label>
+      <input type="radio" name="Mood" value="🙂 Okay">
+      🙂 Okay
+    </label>
+
+    <label>
+      <input type="radio" name="Mood" value="😐 Meh">
+      😐 Meh
+    </label>
+
+    <label>
+      <input type="radio" name="Mood" value="😩 Low">
+      😩 Low
+    </label>
+  </div>
+</div>
+
+
+      <div class="section">
+        <div class="section-title">Wake-up</div>
+        <div class="options">
+          <label><input type="radio" name="Wake-up" value="Before 7"> Before 7</label>
+          <label><input type="radio" name="Wake-up" value="7–8"> 7–8</label>
+          <label><input type="radio" name="Wake-up" value="After 8"> After 8</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Bedtime</div>
+        <div class="options">
+          <label><input type="radio" name="Bedtime" value="Before 11"> Before 11</label>
+          <label><input type="radio" name="Bedtime" value="11–12"> 11–12</label>
+          <label><input type="radio" name="Bedtime" value="After 12"> After 12</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Weight (optional)</div>
+        <div class="options">
+          <label><input type="radio" name="Weight" value="Checked"> I checked</label>
+          <label><input type="radio" name="Weight" value="Did not check"> Did not check</label>
+        </div>
+      </div>
+
+      <button type="button" onclick="showSummary()">Finish & Show Summary</button>
+    </form>
+    <div class="hint">After you see the summary, take a screenshot and post it in the group.</div>
+  </div>
+
+  <div id="summary">
+    <div class="logo-wrap">
+      <img src="LtoG_horizontal.png" alt="Lose to Gain logo">
+    </div>
+    <h2>Daily Summary ✔</h2>
+    <p id="streak" style="
+  font-size:0.9rem;
+  font-weight:600;
+  color:#2bb58c;
+  text-align:center;
+  margin:4px 0 6px;
+"></p>
+<p id="timestamp" style="
+  font-size:0.85rem;
+  opacity:0.7;
+  text-align:center;
+  margin-top:-4px;
+  margin-bottom:10px;
+"></p>
+    <div id="result"></div>
+    <button onclick="editAnswers()">✏️ Change answers</button>
+
+<button onclick="resetForm()" style="
+  background:#e6ebf5;
+  color:#001b4d;
+  margin-top:6px;
+">
+  🔄 Start new check-in
+</button>
+
+    <div class="hint">
+      Screenshot this summary and share it in the Lose to Gain Facebook group.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showSummary() {
+  const form = document.getElementById("checkForm");
+  const data = new FormData(form);
+
+  // REQUIRED fields (Weight intentionally excluded)
+  const requiredFields = [
+    "Sleep",
+    "Water",
+    "Exercise",
+    "Diet",
+    "Mood",
+    "Wake-up",
+    "Bedtime"
+  ];
+
+  // Validation
+  for (let field of requiredFields) {
+    if (!data.get(field)) {
+      alert("Please complete all sections before submitting.");
+      return; // STOP here
+    }
+  }
+
+  // Build summary
+  let output = "";
+  for (const [key, value] of data.entries()) {
+    output += `<p><strong>${key}:</strong> ${value}</p>`;
+  }
+
+  // If Weight not selected, show default text
+  if (!data.get("Weight")) {
+    output += `<p><strong>Weight:</strong> Did not check</p>`;
+  }
+  // ---- STREAK LOGIC (no login, localStorage) ----
+
+// Get today's date (local timezone, YYYY-MM-DD)
+const nowLocal = new Date();
+const today = new Date(
+  nowLocal.getFullYear(),
+  nowLocal.getMonth(),
+  nowLocal.getDate()
+).toISOString().split('T')[0];
+
+// Read stored values
+let lastDate = localStorage.getItem("ltg_last_checkin");
+let streak = parseInt(localStorage.getItem("ltg_streak")) || 0;
+
+// If already checked in today → don't increase
+if (lastDate !== today) {
+  const yesterday = new Date(
+  nowLocal.getFullYear(),
+  nowLocal.getMonth(),
+  nowLocal.getDate() - 1
+);
+const yDate = yesterday.toISOString().split('T')[0];
+
+  if (lastDate === yDate) {
+    streak += 1;
+  } else {
+    streak = 1;
+  }
+
+  localStorage.setItem("ltg_last_checkin", today);
+  localStorage.setItem("ltg_streak", streak);
+}
+
+// Show streak
+const streakEl = document.getElementById("streak");
+
+if (streak >= 1) {
+  streakEl.innerText =
+    `🔥 Current streak: ${streak} day${streak > 1 ? 's' : ''}`;
+  streakEl.style.display = "block";
+} else {
+  streakEl.style.display = "none";
+}
+
+
+   // 🔹 TIMESTAMP ADDITION
+  const now = new Date();
+
+  const formatted = now.toLocaleString(undefined, {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const offset = -now.getTimezoneOffset() / 60;
+  const timezone = `GMT${offset >= 0 ? '+' : ''}${offset}`;
+
+  document.getElementById("timestamp").innerText =
+    `${formatted} (${timezone})`;
+    
+  document.getElementById("result").innerHTML = output;
+  document.getElementById("form-view").style.display = "none";
+  document.getElementById("summary").style.display = "block";
+}
+</script>
+
+<script>
+  function editAnswers() {
+    document.getElementById("summary").style.display = "none";
+    document.getElementById("form-view").style.display = "block";
+  }
+
+  function resetForm() {
+    location.reload();
+  }
+</script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCrnVcp6K-AUTsHJ37aP4U6mBy128_dfoA",
+  authDomain: "lose-to-gain-app.firebaseapp.com",
+  projectId: "lose-to-gain-app",
+  storageBucket: "lose-to-gain-app.firebasestorage.app",
+  messagingSenderId: "1025047264542",
+  appId: "1:1025047264542:web:4071b397d3922e83a59d0f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+// ---------- AUTH FUNCTIONS ----------
+function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .catch(err => alert(err.message));
+}
+
+function emailLogin() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(() => {
+      return auth.createUserWithEmailAndPassword(email, password);
+    })
+    .catch(err => alert(err.message));
+}
+// ---------- AUTH STATE ----------
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById("auth-screen").style.display = "none";
+    document.getElementById("app-screen").style.display = "block";
+  } else {
+    document.getElementById("auth-screen").style.display = "block";
+    document.getElementById("app-screen").style.display = "none";
+  }
+});
+</script>
+
+</body>
+</html>
